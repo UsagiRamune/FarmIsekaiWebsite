@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+/* Custom Classes สำหรับ Game Features */
+.transition-flex {
+  transition-property: flex-grow, flex-basis;
+}
+
+.will-change-flex {
+  will-change: flex-grow, flex-basis;
+}
+
+.shadow-glow {
+  filter: drop-shadow(0 0 10px rgb(245 158 11 / 0.8));
+}
