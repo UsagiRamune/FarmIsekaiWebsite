@@ -1,4 +1,4 @@
-import Navbar from './components/Navbar' // เพิ่ม Navbar
+import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Update from './components/Update'
 import AboutGame from './components/AboutGame'
@@ -7,10 +7,10 @@ import Footer from './components/Footer'
 
 function App() {
   return (
-    <div className="min-h-screen bg-green-50 font-sans text-gray-800 pt-[80px]"> {/* เผื่อพื้นที่ให้ Navbar */}
-      <Navbar /> {/* ใส่ Navbar บรรทัดแรกสุด */}
+    // เปลี่ยนจาก bg-green-50 เป็น bg-stone-950 สีพื้นหลังหลักของเว็บจะดำมืดเลย
+    <div className="min-h-screen bg-stone-950 font-sans text-stone-300 pt-[80px]">
+      <Navbar />
       <main>
-        {/* เพิ่ม ID ให้แต่ละ Section เพื่อให้ Nav link มาถึง */}
         <div id="hero"><Hero /></div>
         <div id="update"><Update /></div>
         <div id="about"><AboutGame /></div>

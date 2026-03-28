@@ -1,14 +1,41 @@
 @import "tailwindcss";
 
-/* Custom Classes สำหรับ Game Features */
-.transition-flex {
-  transition-property: flex-grow, flex-basis;
+/* Custom Utilities สำหรับ Game Features */
+@layer utilities {
+  .transition-flex {
+    transition-property: flex-grow, flex-basis, scale, opacity;
+  }
+  
+  .will-change-flex {
+    will-change: flex-grow, flex-basis, scale, opacity;
+  }
+  
+  .shadow-glow {
+    filter: drop-shadow(0 0 10px rgb(245 158 11 / 0.8));
+  }
 }
 
-.will-change-flex {
-  will-change: flex-grow, flex-basis;
+/* Custom Base: รองรับแอนิเมชันเปลี่ยน activeStep */
+[data-active="true"] {
+  flex-grow: 1 !important;
+  opacity: 1 !important;
+  scale: 1.02 !important;
 }
 
-.shadow-glow {
-  filter: drop-shadow(0 0 10px rgb(245 158 11 / 0.8));
+[data-active="false"] {
+  flex-grow: 0 !important;
+  opacity: 0.6 !important;
+}
+
+/* Custom Component: Showcase Hover State (ให้โรงละครหลักสว่างขึ้น) */
+.group-showcase-hover {
+    transition: opacity 0.5s duration-delay;
+}
+
+.group-showcase:hover .group-showcase-hover {
+    opacity: 1;
+}
+
+.group-nav:hover + .flex-1 .w-full .bg-cover {
+    filter: brightness(0.7);
 }
