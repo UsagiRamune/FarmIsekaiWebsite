@@ -33,6 +33,9 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [activeSection, setActiveSection] = useState('hero')
+  
+  // State สำหรับเปิดปิดเมนูมือถือ
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,7 +66,6 @@ const Navbar = () => {
     return () => observer.disconnect()
   }, [])
 
-  // สังเกตตรง item: DropdownItem กูระบุ Type ให้มันละ
   const handleDropdownClick = (e: React.MouseEvent, item: DropdownItem) => {
     if (item.action) {
       e.preventDefault()
@@ -72,20 +74,24 @@ const Navbar = () => {
         window.dispatchEvent(new CustomEvent('open-patch-modal', { detail: item.action }))
       }, 400)
     }
+    // ปิดเมนูมือถือตอนกดเลือกด้วย
+    setIsMobileMenuOpen(false) 
   }
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isVisible ? 'translate-y-0' : '-translate-y-full'} ${scrolled ? 'bg-stone-950/95 backdrop-blur-md shadow-2xl border-b border-white/5 py-3' : 'bg-transparent backdrop-blur-sm py-4'}`}>
       <div className="max-w-[1500px] mx-auto px-6 flex items-center justify-between">
         
+        {/* โลโก้เกม ขยายให้ใหญ่ขึ้นและ responsive */}
         <a href="#hero" className="flex items-center group shrink-0">
           <img 
             src={titleLogo} 
             alt="FarmIsekai" 
-            className="h-11 md:h-12 w-auto object-contain drop-shadow-lg group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(217,119,6,0.3)] transition-all duration-300" 
+            className="h-16 md:h-20 lg:h-24 w-auto object-contain drop-shadow-lg group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(217,119,6,0.3)] transition-all duration-300" 
           />
         </a>
 
+        {/* เมนู Desktop (ซ่อนบนจอเล็ก) */}
         <div className="hidden lg:flex items-center gap-8 ml-auto">
           <div className="flex items-center gap-8 mr-4">
             {navItems.map((item) => {
@@ -112,7 +118,6 @@ const Navbar = () => {
                       {item.dropdown.map((dropItem) => (
                         <a 
                           key={dropItem.name} 
-                          // ตรงนี้ก็เคลียร์ ไม่แดงแน่นอน
                           href={dropItem.href || '#update'} 
                           onClick={(e) => handleDropdownClick(e, dropItem)}
                           className="block px-5 py-3 text-stone-300 hover:text-amber-500 hover:bg-stone-800/50 transition-colors font-semibold"
@@ -144,6 +149,58 @@ const Navbar = () => {
           </button>
         </div>
 
+        {/* ปุ่ม Hamburger สำหรับจอ Mobile */}
+        <button 
+          className="lg:hidden text-amber-500 hover:text-amber-400 p-2"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+            {isMobileMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+            )}
+          </svg>
+        </button>
+      </div>
+
+      {/* เมนู Dropdown สำหรับ Mobile */}
+      <div className={`lg:hidden absolute top-full left-0 w-full bg-stone-950/95 backdrop-blur-md border-b border-white/5 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[500px] py-4' : 'max-h-0 py-0'}`}>
+        <div className="flex flex-col px-6 gap-4">
+          {navItems.map((item) => (
+            <div key={item.name} className="flex flex-col gap-2">
+              <a 
+                href={item.href} 
+                onClick={() => !item.dropdown && setIsMobileMenuOpen(false)}
+                className="font-bold text-lg text-stone-300 hover:text-amber-500"
+              >
+                {item.name}
+              </a>
+              {item.dropdown && (
+                <div className="pl-4 flex flex-col gap-2 border-l-2 border-stone-800">
+                  {item.dropdown.map((dropItem) => (
+                    <a 
+                      key={dropItem.name} 
+                      href={dropItem.href || '#update'} 
+                      onClick={(e) => handleDropdownClick(e, dropItem)}
+                      className="text-stone-400 hover:text-amber-400 text-sm"
+                    >
+                      {dropItem.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+          <div className="mt-4 pt-4 border-t border-stone-800 flex flex-col gap-4">
+             <button 
+                className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black tracking-wider uppercase rounded-lg shadow-[0_0_15px_rgba(217,119,6,0.5)] transition-all"
+                onClick={() => { alert('Coming Soon!'); setIsMobileMenuOpen(false) }}
+              >
+                 Play Now
+              </button>
+          </div>
+        </div>
       </div>
     </nav>
   )

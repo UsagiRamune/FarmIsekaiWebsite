@@ -17,7 +17,8 @@ const Footer = () => {
           <img
             src={titleLogo}
             alt="FarmIsekai"
-            className="h-24 md:h-32 lg:h-36 w-auto object-contain drop-shadow-[0_0_25px_rgba(217,119,6,0.25)]"
+            /* +++ แก้คลาสตรงนี้ ใช้ w- ควบคุมแทน +++ */
+            className="w-64 md:w-80 lg:w-[450px] h-auto object-contain drop-shadow-[0_0_25px_rgba(217,119,6,0.25)]"
           />
         </div>
 
