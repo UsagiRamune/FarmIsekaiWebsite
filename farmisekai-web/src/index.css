@@ -39,3 +39,42 @@
 .group-nav:hover + .flex-1 .w-full .bg-cover {
     filter: brightness(0.7);
 }
+
+/* เพิ่ม Custom Scrollbar ให้เข้ากับธีมเกม */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a; /* สีพื้นหลังสกรอลบาร์ */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* สีเทาเข้มตอนปกติ */
+  border-radius: 6px;
+  border: 3px solid #0a0a0a; /* เว้นขอบนิดๆ ให้ดูมีคลาส */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706; /* สี Amber ตอนเอาเมาส์ชี้ */
+}
+
+/* Custom Utilities สำหรับเอฟเฟคใหม่ */
+@layer utilities {
+  /* แอนิเมชันตอนแถบดำเด้งเข้ามากระแทก (Bouncing) */
+  .ease-bounce {
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55);
+  }
+}
+
+/* เพิ่ม Custom Easing สำหรับ Cinematic Effect */
+@layer utilities {
+  .ease-bounce {
+    /* กระแทกแรงๆ มีแรงเหวี่ยง */
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55);
+  }
+  .ease-spring {
+    /* สปริงนุ่มๆ บินสวยๆ */
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}

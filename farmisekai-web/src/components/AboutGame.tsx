@@ -1,13 +1,18 @@
 import { useRef, useState } from 'react'
 import type { MouseEvent as ReactMouseEvent } from 'react'
 
+// Import รูปจาก assets
+import coverImg from '../assets/FarmIsekai_Cover.png'
+import preview1 from '../assets/preview1.png'
+import preview2 from '../assets/preview2.png'
+import preview3 from '../assets/preview3.png'
+
 const galleryItems = [
-  // ยัด YouTube Embed URL ของมึงตรงนี้
   { id: 1, type: 'video', src: 'https://www.youtube.com/embed/VCuuOmOubWU', label: 'FarmIsekai Official Trailer' },
-  { id: 2, type: 'image', src: '', label: 'วันแรกในต่างโลก: ถางหญ้าเตรียมแปลง' },
-  { id: 3, type: 'image', src: '', label: 'ระบบปลูกกะหล่ำปลีเวทมนตร์' },
-  { id: 4, type: 'image', src: '', label: 'คราฟต์จอบเหล็กอันแรก' },
-  { id: 5, type: 'image', src: '', label: 'คืนพระจันทร์แดง: มอนสเตอร์บุก!' },
+  { id: 2, type: 'image', src: coverImg, label: 'FarmIsekai Cover' },
+  { id: 3, type: 'image', src: preview1, label: 'Gameplay Preview 1' },
+  { id: 4, type: 'image', src: preview2, label: 'Gameplay Preview 2' },
+  { id: 5, type: 'image', src: preview3, label: 'Gameplay Preview 3' },
 ]
 
 const AboutGame = () => {
@@ -114,7 +119,6 @@ const AboutGame = () => {
                 className="flex-none w-[85vw] sm:w-[450px] md:w-[550px] aspect-video rounded-2xl shadow-xl border-4 border-stone-800 transform transition-transform duration-300 relative overflow-hidden bg-stone-900" 
               >
                 {item.type === 'video' ? (
-                  // YouTube Iframe Embed แท้ๆ
                   <div className="w-full h-full relative pointer-events-auto">
                     <iframe 
                         src={`${item.src}?autoplay=0&controls=1&rel=0`} 
@@ -126,10 +130,8 @@ const AboutGame = () => {
                   </div>
                 ) : (
                   <div className="w-full h-full relative">
-                    <div className="absolute inset-0 z-10 pointer-events-none"></div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-stone-700 border-4 border-dashed border-stone-800 m-2 rounded-xl">
-                      <span className="text-5xl mb-2">📸</span><p className="font-bold text-sm uppercase tracking-widest">Image Placeholder</p>
-                    </div>
+                    {/* แทรกรูปภาพจริงๆ ลงไปตรงนี้ แทน Placeholder */}
+                    <img src={item.src} alt={item.label} className="w-full h-full object-cover pointer-events-none" draggable={false} />
                   </div>
                 )}
               </div>
