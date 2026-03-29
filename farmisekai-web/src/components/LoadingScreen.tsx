@@ -1,139 +1,166 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import coverImg from '../assets/FarmIsekai_Cover.png'
 import titleLogo from '../assets/FarmIsekai_Title.png'
+import teamLogo from '../assets/TeamLogo.png'
 
-const navItems = [
-  { name: 'Home', href: '#hero', targetId: 'hero' },
-  { 
-    name: 'Patch Notes', href: '#update', targetId: 'update',
-    dropdown: [ { name: 'Current Patch', action: 'Current' }, { name: 'Upcoming', action: 'Upcoming' }, { name: 'Previous Patches', action: 'Previous' }, { name: 'More...', action: 'All' } ]
-  },
-  { name: 'About Game', href: '#about', targetId: 'about' },
-  { 
-    name: 'Game Mechanics', href: '#features', targetId: 'features',
-    dropdown: [ { name: 'Core Mechanics', href: '#features' }, { name: 'Survival Mechanics', href: '#survival' } ]
-  },
-]
+// 💡 วิธีใส่เสียง: เอารูปแบบนี้ไปใช้ ถ้ามึงมีไฟล์เสียง
+// import sfxPop from '../assets/pop.mp3'
+// import sfxSwoosh from '../assets/swoosh.mp3'
 
-const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const [activeSection, setActiveSection] = useState('hero')
+interface LoadingScreenProps {
+  onComplete: () => void;
+}
 
+const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
+  const [progress, setProgress] = useState(0)
+  const [phase, setPhase] = useState<'loading' | 'studio' | 'cover' | 'logo-pop1' | 'logo-pop2' | 'logo-fly'>('loading')
+  const [isExiting, setIsExiting] = useState(false)
+  
+  // State สำหรับเก็บตำแหน่งเมาส์ (ทำ Genshin Effect)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+
+  // 1. จำลองหลอดโหลด (0 -> 100)
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setScrolled(currentScrollY > 20)
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false) 
-      } else {
-        setIsVisible(true)  
-      }
-      setLastScrollY(currentScrollY)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
-
-  useEffect(() => {
-    const sections = document.querySelectorAll('div[id]')
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id)
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setTimeout(() => setPhase('studio'), 500) // ไปหน้าโลโก้ทีม
+          setTimeout(() => setPhase('cover'), 3500) // ไปหน้าปกเกม
+          return 100;
         }
+        return prev + Math.floor(Math.random() * 10) + 2
       })
-    }, { threshold: 0.3 }) 
-
-    sections.forEach(s => observer.observe(s))
-    return () => observer.disconnect()
+    }, 100)
+    return () => clearInterval(interval)
   }, [])
 
-  const handleDropdownClick = (e: React.MouseEvent, item: any) => {
-    if (item.action) {
-      e.preventDefault()
-      document.getElementById('update')?.scrollIntoView({ behavior: 'smooth' })
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('open-patch-modal', { detail: item.action }))
-      }, 400)
-    }
+  // 2. ฟังก์ชันจับเมาส์ขยับ (Parallax)
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (phase !== 'cover') return; // ให้ขยับได้เฉพาะตอนอยู่หน้าปก
+    // คำนวณให้เมาส์ขยับภาพไปในทิศทางตรงข้าม (หรือทิศเดียวกันก็ได้) สูงสุด 20px
+    const x = (e.clientX / window.innerWidth - 0.5) * -30;
+    const y = (e.clientY / window.innerHeight - 0.5) * -30;
+    setMousePos({ x, y });
   }
 
+  // 3. เมื่อกด Tap to continue
+  const handleTap = () => {
+    if (phase !== 'cover') return
+    
+    // จังหวะที่ 1: โลโก้ Pop 1 (ขยายแล้วหุบ)
+    setPhase('logo-pop1')
+    // new Audio(sfxPop).play() // 💡 ปลดคอมเมนต์ตรงนี้ถ้ามีเสียง
+
+    // จังหวะที่ 2: โลโก้ Pop 2 (ขยายใหญ่ขึ้น)
+    setTimeout(() => {
+      setPhase('logo-pop2')
+      // new Audio(sfxPop).play()
+    }, 600)
+
+    // จังหวะที่ 3: โลโก้บินไป Navbar (Fly)
+    setTimeout(() => {
+      setPhase('logo-fly')
+      // new Audio(sfxSwoosh).play() // 💡 ปลดคอมเมนต์ตรงนี้ถ้ามีเสียง
+    }, 1200)
+
+    // จังหวะที่ 4: Fade Out หน้า Loading ทิ้ง
+    setTimeout(() => {
+      setIsExiting(true)
+      setTimeout(() => {
+        onComplete() // เข้าเกมจริงๆ
+      }, 1000) 
+    }, 2200)
+  }
+
+  // ตั้งค่าแอนิเมชันให้ Framer Motion
+  const logoVariants = {
+    hidden: { opacity: 0, scale: 0.5, x: '-50%', y: '-50%' },
+    center: { opacity: 1, scale: 1, x: '-50%', y: '-50%' },
+    pop1: { scale: [1, 1.3, 1], transition: { duration: 0.6, ease: "backOut" } },
+    pop2: { scale: [1, 1.5], transition: { duration: 0.6, ease: "backOut" } },
+    // บินไปซ้ายบนแบบสมูทๆ
+    fly: { opacity: 1, scale: 1, x: '24px', y: '16px', top: '0%', left: '0%', transition: { duration: 1, ease: 'easeInOut' } }
+  };
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isVisible ? 'translate-y-0' : '-translate-y-full'} ${scrolled ? 'bg-stone-950/95 backdrop-blur-md shadow-2xl border-b border-white/5 py-3' : 'bg-transparent backdrop-blur-sm py-4'}`}>
-      <div className="max-w-[1500px] mx-auto px-6 flex items-center justify-between">
+    <div 
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050505] transition-opacity duration-1000 overflow-hidden ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      onClick={handleTap}
+      onMouseMove={handleMouseMove}
+    >
+      <AnimatePresence>
         
-        {/* ================= เปลี่ยนเป็น Logo Title ================= */}
-        <a href="#hero" className="flex items-center group shrink-0">
-          <img 
-            src={titleLogo} 
-            alt="FarmIsekai" 
-            className="h-11 md:h-12 w-auto object-contain drop-shadow-lg group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(217,119,6,0.3)] transition-all duration-300" 
-          />
-        </a>
+        {/* เฟส 1: โหลด (หลอดโหลด) */}
+        {phase === 'loading' && (
+          <motion.div initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-6">
+            <h1 className="text-4xl md:text-5xl font-black text-amber-500 tracking-tighter drop-shadow-lg">FarmIsekai</h1>
+            <div className="w-64 md:w-96 h-1.5 bg-stone-900 rounded-full overflow-hidden border border-stone-800">
+               <div className="h-full bg-amber-500 shadow-[0_0_15px_#f59e0b] transition-all duration-200" style={{ width: `${progress}%` }}></div>
+             </div>
+             <p className="text-stone-500 font-bold tracking-widest text-sm uppercase">Loading Assets <span className="text-amber-500">{progress}%</span></p>
+          </motion.div>
+        )}
 
-        {/* เมนูและโซเชียล */}
-        <div className="hidden lg:flex items-center gap-8 ml-auto">
-          <div className="flex items-center gap-8 mr-4">
-            {navItems.map((item) => {
-              const isActive = activeSection === item.targetId || (item.targetId === 'features' && activeSection === 'survival');
-              return (
-              <div key={item.name} className="relative group">
-                <a 
-                  href={item.href} 
-                  className={`font-bold text-base tracking-wide transition-colors flex items-center gap-1.5 py-2
-                  ${isActive ? 'text-amber-500' : 'text-stone-300 hover:text-amber-400'}`}
-                >
-                  {item.name}
-                  {item.dropdown && (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-0.5 opacity-60 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  )}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-amber-500 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
-                </a>
-
-                {item.dropdown && (
-                  <div className="absolute left-0 top-full mt-2 w-56 bg-stone-900 border border-stone-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 overflow-hidden">
-                    <div className="py-2">
-                      {item.dropdown.map((dropItem) => (
-                        <a 
-                          key={dropItem.name} 
-                          href={('href' in dropItem ? dropItem.href : '#update') || '#update'} 
-                          onClick={(e) => handleDropdownClick(e, dropItem)}
-                          className="block px-5 py-3 text-stone-300 hover:text-amber-500 hover:bg-stone-800/50 transition-colors font-semibold"
-                        >
-                          {dropItem.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )})}
-          </div>
-
-          <div className="flex items-center gap-4 border-l border-stone-700 pl-6">
-            <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" className="text-stone-400 hover:text-[#1877F2] hover:scale-110 transition-all">
-              <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" className="text-stone-400 hover:text-[#FF0000] hover:scale-110 transition-all">
-              <svg fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            </a>
-          </div>
-
-          <button 
-            className="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black tracking-wider uppercase rounded-lg shadow-[0_0_15px_rgba(217,119,6,0.5)] hover:shadow-[0_0_25px_rgba(217,119,6,0.8)] hover:-translate-y-0.5 transition-all"
-            onClick={() => alert('Coming Soon!')}
+        {/* เฟส 2: โชว์โลโก้ทีม BigNi GameDev (Fade In แล้ว Out) */}
+        {phase === 'studio' && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            exit={{ opacity: 0, scale: 1.1 }} 
+            transition={{ duration: 0.8 }} 
+            className="flex flex-col items-center gap-6"
           >
-             Play Now
-          </button>
-        </div>
+            <img src={teamLogo} alt="BigNi GameDev Studio" className="h-32 md:h-48 object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]" />
+            <p className="text-stone-500 font-bold tracking-[0.4em] text-sm uppercase">Presented by <strong className="text-white">BigNi GameDev</strong></p>
+          </motion.div>
+        )}
 
-      </div>
-    </nav>
+        {/* เฟส 3 เป็นต้นไป: โชว์ปกเกม + แอนิเมชัน */}
+        {(phase === 'cover' || phase === 'logo-pop1' || phase === 'logo-pop2' || phase === 'logo-fly') && (
+          <>
+            {/* Background พร้อมระบบ Parallax (Genshin Style) */}
+            <motion.div 
+              initial={{ opacity: 0, filter: 'blur(20px)', scale: 1.1 }} 
+              animate={{ opacity: 1, filter: 'blur(0px)', scale: 1.05, x: mousePos.x, y: mousePos.y }} 
+              transition={{ 
+                opacity: { duration: 1.5 }, 
+                filter: { duration: 1.5 },
+                // ระบบเด้งๆ สปริงๆ เวลาเมาส์ขยับ
+                x: { type: 'spring', stiffness: 50, damping: 20 },
+                y: { type: 'spring', stiffness: 50, damping: 20 }
+              }} 
+              className="absolute inset-0 w-full h-full bg-cover bg-center origin-center" 
+              style={{ backgroundImage: `url(${coverImg})` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90 pointer-events-none"></div>
+            </motion.div>
+          
+            {/* Tap to continue (โชว์เฉพาะเฟส Cover) */}
+            {phase === 'cover' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="absolute inset-0 flex flex-col items-center justify-center animate-pulse cursor-pointer z-10">
+                <p className="text-white text-3xl md:text-4xl font-black tracking-[0.3em] uppercase drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">Tap to Continue</p>
+                <span className="text-amber-500 text-4xl mt-2 drop-shadow-lg">▼</span>
+              </motion.div>
+            )}
+
+            {/* แอนิเมชันโลโก้ Title Game (Pop 1 -> Pop 2 -> Fly) */}
+            <motion.div 
+              className="absolute pointer-events-none flex items-center justify-center h-44 md:h-64 w-auto z-50"
+              initial="hidden" 
+              animate={phase === 'logo-fly' ? 'fly' : phase === 'logo-pop1' ? 'pop1' : phase === 'logo-pop2' ? 'pop2' : 'center'}
+              variants={logoVariants}
+              style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+            >
+              <img src={titleLogo} alt="FarmIsekai" className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
+            </motion.div>
+          </>
+        )}
+
+      </AnimatePresence>
+    </div>
   )
 }
 
-export default Navbar
+export default LoadingScreen

@@ -1,46 +1,25 @@
 @import "tailwindcss";
 
-/* Custom Utilities สำหรับ Game Features */
 @layer utilities {
-  .transition-flex {
-    transition-property: flex-grow, flex-basis, scale, opacity;
-  }
+  .transition-flex { transition-property: flex-grow, flex-basis, scale, opacity; }
+  .will-change-flex { will-change: flex-grow, flex-basis, scale, opacity; }
+  .shadow-glow { filter: drop-shadow(0 0 10px rgb(245 158 11 / 0.8)); }
   
-  .will-change-flex {
-    will-change: flex-grow, flex-basis, scale, opacity;
-  }
-  
-  .shadow-glow {
-    filter: drop-shadow(0 0 10px rgb(245 158 11 / 0.8));
-  }
+  /* แอนิเมชันตอนแถบดำเด้งเข้ามากระแทก (Bouncing) */
+  .ease-bounce { transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55); }
+  /* สปริงนุ่มๆ บินสวยๆ */
+  .ease-spring { transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 }
 
 /* Custom Base: รองรับแอนิเมชันเปลี่ยน activeStep */
-[data-active="true"] {
-  flex-grow: 1 !important;
-  opacity: 1 !important;
-  scale: 1.02 !important;
-}
+[data-active="true"] { flex-grow: 1 !important; opacity: 1 !important; scale: 1.02 !important; }
+[data-active="false"] { flex-grow: 0 !important; opacity: 0.6 !important; }
 
-[data-active="false"] {
-  flex-grow: 0 !important;
-  opacity: 0.6 !important;
-}
+/* Custom Component: Showcase Hover State */
+.group-showcase-hover { transition: opacity 0.5s duration-delay; }
+.group-showcase:hover .group-showcase-hover { opacity: 1; }
+.group-nav:hover + .flex-1 .w-full .bg-cover { filter: brightness(0.7); }
 
-/* Custom Component: Showcase Hover State (ให้โรงละครหลักสว่างขึ้น) */
-.group-showcase-hover {
-    transition: opacity 0.5s duration-delay;
-}
-
-.group-showcase:hover .group-showcase-hover {
-    opacity: 1;
-}
-
-.group-nav:hover + .flex-1 .w-full .bg-cover {
-    filter: brightness(0.7);
-}
-
-/* เพิ่ม Custom Scrollbar ให้เข้ากับธีมเกม */
 ::-webkit-scrollbar {
   width: 12px;
 }
@@ -57,24 +36,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #d97706; /* สี Amber ตอนเอาเมาส์ชี้ */
-}
-
-/* Custom Utilities สำหรับเอฟเฟคใหม่ */
-@layer utilities {
-  /* แอนิเมชันตอนแถบดำเด้งเข้ามากระแทก (Bouncing) */
-  .ease-bounce {
-    transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55);
-  }
-}
-
-/* เพิ่ม Custom Easing สำหรับ Cinematic Effect */
-@layer utilities {
-  .ease-bounce {
-    /* กระแทกแรงๆ มีแรงเหวี่ยง */
-    transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55);
-  }
-  .ease-spring {
-    /* สปริงนุ่มๆ บินสวยๆ */
-    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
 }
