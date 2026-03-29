@@ -1,4 +1,4 @@
-import { defineConfig, optimizeDeps } from 'vite'
+import { defineConfig } from 'vite' // <--- ลบ optimizeDeps ออกจากตรงนี้
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite' 
 
@@ -7,7 +7,6 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(), 
-    
   ],
   optimizeDeps: {
     include: ['framer-motion']
