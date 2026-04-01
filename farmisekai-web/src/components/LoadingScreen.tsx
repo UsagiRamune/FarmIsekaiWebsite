@@ -230,7 +230,7 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
               initial={{ opacity: 0, filter: 'blur(24px)', scale: 1.08 }}
               animate={{ opacity: 1, filter: 'blur(0px)', scale: 1.04, x: mousePos.x, y: mousePos.y }}
               transition={{ opacity: { duration: 1.8 }, filter: { duration: 2.0 }, x: { type: 'spring', stiffness: 50, damping: 20 }, y: { type: 'spring', stiffness: 50, damping: 20 } }}
-              className="absolute inset-0 bg-cover bg-center origin-center"
+              className="absolute inset-0 bg-cover bg-[28%_center] lg:bg-center origin-center"
               style={{ backgroundImage: `url(${coverImg})` }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-black/30" />

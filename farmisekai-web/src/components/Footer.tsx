@@ -1,30 +1,32 @@
+import { useLanguage } from '../context/LanguageContext'
 import teamLogo from '../assets/TeamLogo.png'
 import titleLogo from '../assets/FarmIsekai_Title.png'
 
 const Footer = () => {
+  const { lang } = useLanguage()
+
   return (
     <footer className="py-16 text-center bg-[#0a0a0a] text-stone-400 border-t border-white/5 relative overflow-hidden">
-
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
         <div className="absolute -left-16 -top-16 text-9xl">🌱</div>
         <div className="absolute -right-16 -bottom-16 text-9xl rotate-12">⚔️</div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 z-10 relative flex flex-col items-center">
-
-        {/* Title Logo เกม — ใหญ่เต็มที่ */}
         <div className="mb-6 hover:scale-105 transition-transform duration-300">
           <img
             src={titleLogo}
             alt="FarmIsekai"
-            /* +++ แก้คลาสตรงนี้ ใช้ w- ควบคุมแทน +++ */
-            className="w-64 md:w-80 lg:w-[450px] h-auto object-contain drop-shadow-[0_0_25px_rgba(217,119,6,0.25)]"
+            className="h-24 md:h-32 lg:h-36 w-auto object-contain drop-shadow-[0_0_25px_rgba(217,119,6,0.25)]"
           />
         </div>
 
         <p className="text-stone-500 text-sm md:text-base leading-relaxed mb-8 max-w-xl mx-auto">
-          เอาชีวิตรอดและสร้างฟาร์มในฝันของคุณในโลกต่างมิติ <br />
-          ผลงานสร้างสรรค์โดยทีม BigNiGameDev
+          {lang === 'TH' ? (
+            <>เอาชีวิตรอดและสร้างฟาร์มในฝันของคุณในโลกต่างมิติ <br />ผลงานสร้างสรรค์โดยทีม BigNiGameDev</>
+          ) : (
+            <>Survive and build your dream farm in another world. <br />Created by BigNiGameDev team.</>
+          )}
         </p>
 
         <div className="flex items-center gap-6 mb-10">
@@ -43,8 +45,6 @@ const Footer = () => {
         </div>
 
         <div className="w-full border-t border-white/5 pt-8 flex flex-col items-center gap-5">
-
-          {/* Team Logo — ใหญ่กว่าเดิมเยอะ */}
           <div className="hover:scale-105 transition-transform duration-300 cursor-pointer">
             <img
               src={teamLogo}
@@ -56,9 +56,13 @@ const Footer = () => {
           <p className="text-stone-500 text-xs md:text-sm font-bold tracking-widest uppercase">
             &copy; {new Date().getFullYear()} BigNiGameDev
           </p>
-          <p className="text-stone-600 text-xs">College of Arts, Media and Technology</p>
-          <p className="text-stone-700 text-[10px] mt-1">
-            This is an in-development version of FarmIsekai. Mechanics and visuals are subject to change.
+          <p className="text-stone-600 text-xs">
+            {lang === 'TH' ? 'วิทยาลัยศิลปะ สื่อ และเทคโนโลยี' : 'College of Arts, Media and Technology'}
+          </p>
+          <p className="text-stone-700 text-[10px] mt-1 text-center">
+            {lang === 'TH' 
+              ? 'ตัวเกมอยู่ในช่วงการพัฒนา ระบบภายในเกมและงานภาพอาจมีการเปลี่ยนแปลงในอนาคต' 
+              : 'This is an in-development version of FarmIsekai. Mechanics and visuals are subject to change.'}
           </p>
         </div>
       </div>

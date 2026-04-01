@@ -1,30 +1,39 @@
 import { useState, useEffect } from 'react'
 import titleLogo from '../assets/FarmIsekai_Title.png' 
+import { useLanguage } from '../context/LanguageContext'
 
-// ประกาศ Type ให้ TypeScript เลิกบ่น!
+// ประกาศ Type ให้รองรับ 2 ภาษา
 type DropdownItem = {
-  name: string;
+  name: { TH: string; EN: string };
   href?: string;
   action?: string;
 };
 
 type NavItemType = {
-  name: string;
+  name: { TH: string; EN: string };
   href: string;
   targetId: string;
   dropdown?: DropdownItem[];
 };
 
 const navItems: NavItemType[] = [
-  { name: 'Home', href: '#hero', targetId: 'hero' },
+  { name: { TH: 'หน้าแรก', EN: 'Home' }, href: '#hero', targetId: 'hero' },
   { 
-    name: 'Patch Notes', href: '#update', targetId: 'update',
-    dropdown: [ { name: 'Current Patch', action: 'Current' }, { name: 'Upcoming', action: 'Upcoming' }, { name: 'Previous Patches', action: 'Previous' }, { name: 'More...', action: 'All' } ]
+    name: { TH: 'อัปเดตแพทช์', EN: 'Patch Notes' }, href: '#update', targetId: 'update',
+    dropdown: [ 
+      { name: { TH: 'แพทช์ปัจจุบัน', EN: 'Current Patch' }, action: 'Current' }, 
+      { name: { TH: 'อัปเดตล่วงหน้า', EN: 'Upcoming' }, action: 'Upcoming' }, 
+      { name: { TH: 'แพทช์ที่ผ่านมา', EN: 'Previous Patches' }, action: 'Previous' }, 
+      { name: { TH: 'ดูทั้งหมด...', EN: 'More...' }, action: 'All' } 
+    ]
   },
-  { name: 'About Game', href: '#about', targetId: 'about' },
+  { name: { TH: 'เกี่ยวกับเกม', EN: 'About Game' }, href: '#about', targetId: 'about' },
   { 
-    name: 'Game Mechanics', href: '#features', targetId: 'features',
-    dropdown: [ { name: 'Core Mechanics', href: '#features' }, { name: 'Survival Mechanics', href: '#survival' } ]
+    name: { TH: 'ระบบเกม', EN: 'Game Mechanics' }, href: '#features', targetId: 'features',
+    dropdown: [ 
+      { name: { TH: 'ระบบฟาร์มหลัก', EN: 'Core Mechanics' }, href: '#features' }, 
+      { name: { TH: 'ระบบเอาชีวิตรอด', EN: 'Survival Mechanics' }, href: '#survival' } 
+    ]
   },
 ]
 
@@ -33,9 +42,9 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [activeSection, setActiveSection] = useState('hero')
-  
-  // State สำหรับเปิดปิดเมนูมือถือ
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  
+  const { lang, toggleLang } = useLanguage()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,7 +83,6 @@ const Navbar = () => {
         window.dispatchEvent(new CustomEvent('open-patch-modal', { detail: item.action }))
       }, 400)
     }
-    // ปิดเมนูมือถือตอนกดเลือกด้วย
     setIsMobileMenuOpen(false) 
   }
 
@@ -82,7 +90,6 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isVisible ? 'translate-y-0' : '-translate-y-full'} ${scrolled ? 'bg-stone-950/95 backdrop-blur-md shadow-2xl border-b border-white/5 py-3' : 'bg-transparent backdrop-blur-sm py-4'}`}>
       <div className="max-w-[1500px] mx-auto px-6 flex items-center justify-between">
         
-        {/* โลโก้เกม ขยายให้ใหญ่ขึ้นและ responsive */}
         <a href="#hero" className="flex items-center group shrink-0">
           <img 
             src={titleLogo} 
@@ -91,19 +98,19 @@ const Navbar = () => {
           />
         </a>
 
-        {/* เมนู Desktop (ซ่อนบนจอเล็ก) */}
+        {/* เมนู Desktop */}
         <div className="hidden xl:flex items-center gap-8 ml-auto">
           <div className="flex items-center gap-8 mr-4">
             {navItems.map((item) => {
               const isActive = activeSection === item.targetId || (item.targetId === 'features' && activeSection === 'survival');
               return (
-              <div key={item.name} className="relative group">
+              <div key={item.name.EN} className="relative group">
                 <a 
                   href={item.href} 
                   className={`font-bold text-base tracking-wide transition-colors flex items-center gap-1.5 py-2
                   ${isActive ? 'text-amber-500' : 'text-stone-300 hover:text-amber-400'}`}
                 >
-                  {item.name}
+                  {item.name[lang]}
                   {item.dropdown && (
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-0.5 opacity-60 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
@@ -117,12 +124,12 @@ const Navbar = () => {
                     <div className="py-2">
                       {item.dropdown.map((dropItem) => (
                         <a 
-                          key={dropItem.name} 
+                          key={dropItem.name.EN} 
                           href={dropItem.href || '#update'} 
                           onClick={(e) => handleDropdownClick(e, dropItem)}
                           className="block px-5 py-3 text-stone-300 hover:text-amber-500 hover:bg-stone-800/50 transition-colors font-semibold"
                         >
-                          {dropItem.name}
+                          {dropItem.name[lang]}
                         </a>
                       ))}
                     </div>
@@ -133,6 +140,15 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4 border-l border-stone-700 pl-6">
+            
+            {/* จุดที่ 1: ปุ่มเปลี่ยนภาษาแบบไม่มีธง (Desktop) */}
+            <button 
+              onClick={toggleLang}
+              className="flex items-center justify-center px-3 h-8 rounded-md bg-stone-800 border border-stone-600 text-stone-300 font-bold hover:text-amber-500 hover:border-amber-500 transition-all text-sm shrink-0 whitespace-nowrap"
+            >
+              {lang}
+            </button>
+
             <a href="https://www.facebook.com/FarmIsekai" target="_blank" rel="noreferrer" className="text-stone-400 hover:text-[#1877F2] hover:scale-110 transition-all">
               <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             </a>
@@ -143,13 +159,13 @@ const Navbar = () => {
 
           <button 
             className="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black tracking-wider uppercase rounded-lg shadow-[0_0_15px_rgba(217,119,6,0.5)] hover:shadow-[0_0_25px_rgba(217,119,6,0.8)] hover:-translate-y-0.5 transition-all"
-            onClick={() => alert('Coming Soon!')}
+            onClick={() => alert(lang === 'TH' ? 'เร็วๆ นี้!' : 'Coming Soon!')}
           >
-             Play Now
+             {lang === 'TH' ? 'เล่นเลย' : 'Play Now'}
           </button>
         </div>
 
-        {/* ปุ่ม Hamburger สำหรับจอ Mobile */}
+        {/* ปุ่ม Hamburger สำหรับ Mobile/Tablet */}
         <button 
           className="xl:hidden text-amber-500 hover:text-amber-400 p-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -165,27 +181,38 @@ const Navbar = () => {
       </div>
 
       {/* เมนู Dropdown สำหรับ Mobile */}
-      <div className={`xl:hidden absolute top-full left-0 w-full bg-stone-950/95 backdrop-blur-md border-b border-white/5 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[500px] py-4' : 'max-h-0 py-0'}`}>
+      <div className={`xl:hidden absolute top-full left-0 w-full bg-stone-950/95 backdrop-blur-md border-b border-white/5 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[600px] py-4' : 'max-h-0 py-0'}`}>
         <div className="flex flex-col px-6 gap-4">
+          
+          {/* จุดที่ 2: ปุ่มเปลี่ยนภาษาแบบไม่มีธง (Mobile) */}
+          <div className="flex justify-end pb-2 border-b border-stone-800">
+            <button 
+              onClick={toggleLang}
+              className="flex items-center justify-center px-4 py-1.5 rounded-md bg-stone-800 border border-stone-600 text-stone-300 font-bold hover:text-amber-500 transition-all text-sm"
+            >
+              {lang === 'TH' ? 'สลับภาษา (TH)' : 'Switch Lang (EN)'}
+            </button>
+          </div>
+
           {navItems.map((item) => (
-            <div key={item.name} className="flex flex-col gap-2">
+            <div key={item.name.EN} className="flex flex-col gap-2">
               <a 
                 href={item.href} 
                 onClick={() => !item.dropdown && setIsMobileMenuOpen(false)}
                 className="font-bold text-lg text-stone-300 hover:text-amber-500"
               >
-                {item.name}
+                {item.name[lang]}
               </a>
               {item.dropdown && (
                 <div className="pl-4 flex flex-col gap-2 border-l-2 border-stone-800">
                   {item.dropdown.map((dropItem) => (
                     <a 
-                      key={dropItem.name} 
+                      key={dropItem.name.EN} 
                       href={dropItem.href || '#update'} 
                       onClick={(e) => handleDropdownClick(e, dropItem)}
                       className="text-stone-400 hover:text-amber-400 text-sm"
                     >
-                      {dropItem.name}
+                      {dropItem.name[lang]}
                     </a>
                   ))}
                 </div>
@@ -195,9 +222,9 @@ const Navbar = () => {
           <div className="mt-4 pt-4 border-t border-stone-800 flex flex-col gap-4">
              <button 
                 className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black tracking-wider uppercase rounded-lg shadow-[0_0_15px_rgba(217,119,6,0.5)] transition-all"
-                onClick={() => { alert('Coming Soon!'); setIsMobileMenuOpen(false) }}
+                onClick={() => { alert(lang === 'TH' ? 'เร็วๆ นี้!' : 'Coming Soon!'); setIsMobileMenuOpen(false) }}
               >
-                 Play Now
+                 {lang === 'TH' ? 'เล่นเลย' : 'Play Now'}
               </button>
           </div>
         </div>

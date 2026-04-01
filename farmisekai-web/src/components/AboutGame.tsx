@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { MouseEvent as ReactMouseEvent } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 
 // Import รูปจาก assets
 import coverImg from '../assets/FarmIsekai_Cover.png'
@@ -16,6 +17,7 @@ const galleryItems = [
 ]
 
 const AboutGame = () => {
+  const { lang } = useLanguage()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
@@ -85,18 +87,36 @@ const AboutGame = () => {
   }
 
   return (
-    <section className="py-24 px-6 bg-stone-950 text-stone-300 overflow-hidden">
+    <section id="about" className="py-24 px-6 bg-stone-950 text-stone-300 overflow-hidden scroll-mt-20">
       <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
         
         <div className="w-full lg:w-5/12 space-y-8 z-10 shrink-0">
           <div className="space-y-6">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-amber-500 tracking-tight leading-tight">
-              ชีวิตสโลว์ไลฟ์ในต่างโลก?<br/> 
-              <span className="text-white block mt-2">ลืมไปได้เลย!</span>
+              {lang === 'TH' ? 'ชีวิตสโลว์ไลฟ์ในต่างโลก?' : 'A slow life in another world?'} <br/> 
+              <span className="text-white block mt-2">
+                {lang === 'TH' ? 'ลืมไปได้เลย!' : 'Forget about it!'}
+              </span>
             </h2>
             <div className="prose prose-lg prose-invert text-stone-400 leading-loose space-y-5 max-w-none">
-              <p>ตื่นขึ้นมาในต่างโลกทั้งที นึกว่าจะได้เป็นผู้กล้ามีพลังโกงๆ... เปล่าเลย! คุณต้องมาจับจอบถางหญ้า ปลูกพืชผล และเอาชีวิตรอดจากมอนสเตอร์ที่จ้องจะบุกฟาร์มของคุณตอนกลางคืน</p>
-              <p>ใน <strong className="text-amber-500">FarmIsekai</strong> คุณจะได้สัมผัสเกมแนว Survival Farming มุมมอง 3D Third-Person ที่ความตายมีราคาแพงลิ่ว และทุกคืนคือฝันร้าย</p>
+              <p>
+                {lang === 'TH' 
+                  ? 'ตื่นขึ้นมาในต่างโลกทั้งที นึกว่าจะได้เป็นผู้กล้ามีพลังโกงๆ... เปล่าเลย! คุณต้องมาจับจอบถางหญ้า ปลูกพืชผล และเอาชีวิตรอดจากมอนสเตอร์ที่จ้องจะบุกฟาร์มของคุณตอนกลางคืน'
+                  : "Waking up in another world, you'd think you'd be a hero with OP powers... Nope! You have to grab a hoe, clear weeds, grow crops, and survive monsters aiming to raid your farm at night."}
+              </p>
+              <p>
+                {lang === 'TH'
+                  ? 'ใน '
+                  : 'In '}
+                <strong className="text-amber-500">FarmIsekai</strong> 
+                {lang === 'TH'
+                  ? ' คุณจะได้สัมผัสเกมแนว Survival Farming มุมมอง '
+                  : ' you will experience a Survival Farming game in a '}
+                <strong className="text-red-500">Top-Down Bird's Eye View</strong> 
+                {lang === 'TH'
+                  ? ' ที่ความตายมีราคาแพงลิ่ว และทุกคืนคือฝันร้าย'
+                  : ' where death comes at a high price, and every night is a nightmare.'}
+              </p>
             </div>
           </div>
         </div>
@@ -130,7 +150,6 @@ const AboutGame = () => {
                   </div>
                 ) : (
                   <div className="w-full h-full relative">
-                    {/* แทรกรูปภาพจริงๆ ลงไปตรงนี้ แทน Placeholder */}
                     <img src={item.src} alt={item.label} className="w-full h-full object-cover pointer-events-none" draggable={false} />
                   </div>
                 )}
