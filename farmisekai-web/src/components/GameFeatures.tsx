@@ -137,46 +137,48 @@ const GameFeatures = () => {
             <h3 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase drop-shadow-lg">Survival Mechanics</h3>
           </div>
 
-          <div className="flex flex-col md:flex-row w-full h-[70vh] md:h-[450px] gap-2 md:gap-4 overflow-hidden rounded-3xl md:rounded-[2rem] border-4 border-stone-800 bg-stone-900 shadow-xl">
+          {/* ปรับ h-[70vh] เป็น h-auto บนมือถือให้เลื่อนอ่านได้ยาวๆ และ md:h-[450px] บน Desktop */}
+          <div className="flex flex-col md:flex-row w-full h-auto md:h-[450px] gap-4 md:gap-4 overflow-hidden rounded-3xl md:rounded-[2rem] border-4 border-stone-800 bg-stone-900 shadow-xl p-2 md:p-0">
             {subMechanics.map((feature) => (
               <div 
                 key={feature.id} 
-                className="group relative flex-1 hover:flex-[4] lg:hover:flex-[5] transition-flex duration-400 ease-in-out cursor-pointer overflow-hidden rounded-2xl md:rounded-[2rem] border border-transparent hover:border-red-500/80 will-change-flex translate-z-0 bg-stone-950"
+                // บนมือถือบังคับความสูง h-[200px] ไปเลย จะได้ไม่เบียดกัน ส่วน Desktop ใช้ flex-1 รอโฮเวอร์
+                className="group relative h-[200px] md:h-auto md:flex-1 md:hover:flex-[4] lg:hover:flex-[5] transition-flex duration-400 ease-in-out cursor-pointer overflow-hidden rounded-2xl md:rounded-[2rem] border border-stone-700/50 md:border-transparent hover:border-red-500/80 will-change-flex translate-z-0 bg-stone-950"
               >
-                {/* พื้นหลังปกติ (สีเทาดำ) */}
-                <div className="absolute inset-0 w-full h-full bg-stone-800 transition-opacity duration-300 opacity-60 group-hover:opacity-0 mix-blend-luminosity group-hover:mix-blend-normal translate-z-0"></div>
+                {/* พื้นหลังปกติ (สีเทาดำ) - ซ่อนบนมือถือ โชว์บน Desktop */}
+                <div className="absolute inset-0 w-full h-full bg-stone-800 transition-opacity duration-300 opacity-0 md:opacity-60 md:group-hover:opacity-0 mix-blend-luminosity md:group-hover:mix-blend-normal translate-z-0"></div>
                 
-                {/* ลายน้ำยักษ์ตรงกลางการ์ด (โชว์ตอนยังไม่ Hover) */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-10 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none translate-z-0">
+                {/* ลายน้ำยักษ์ตรงกลางการ์ด (ซ่อนบนมือถือ โชว์บน Desktop ตอนยังไม่ Hover) */}
+                <div className="hidden md:flex absolute inset-0 items-center justify-center opacity-10 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none translate-z-0">
                   <span className="text-[120px] md:text-[180px] grayscale filter">{feature.icon}</span>
                 </div>
 
-                {/* ภาพ GIF (โชว์ตอน Hover) */}
+                {/* ภาพ GIF - มือถือโชว์สว่างเลย Desktop รอ Hover */}
                 <div 
-                  className="absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-400 opacity-0 group-hover:opacity-100 scale-110 group-hover:scale-100 translate-z-0"
+                  className="absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 scale-100 md:scale-110 md:group-hover:scale-100 translate-z-0"
                   style={{ backgroundImage: `url(${feature.gifImg})` }}
                 ></div>
 
-                {/* Gradient บังข้างล่าง */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none translate-z-0"></div>
+                {/* Gradient บังข้างล่าง - มือถือโชว์เข้มเลย Desktop รอ Hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-100 md:opacity-80 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none translate-z-0"></div>
 
                 {/* คอนเทนต์ Text */}
-                <div className="absolute inset-0 p-6 flex flex-col justify-end pointer-events-none translate-z-0">
+                <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-end pointer-events-none translate-z-0">
                   
-                  {/* ไอคอน + ชื่อหัวข้อ (โชว์ตลอด โฮเวอร์แล้วเด้งขึ้นนิดนึง) */}
-                  <div className="flex items-center gap-4 transition-transform duration-400 group-hover:-translate-y-2">
-                    <div className="w-14 h-14 shrink-0 bg-stone-900/90 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl border border-stone-700 shadow-xl group-hover:border-red-500 group-hover:scale-110 transition-transform duration-300">
+                  {/* ไอคอน + ชื่อหัวข้อ (มือถือเด้งค้างไว้พร้อมขอบแดง Desktop รอ Hover) */}
+                  <div className="flex items-center gap-4 transition-transform duration-400 -translate-y-2 md:translate-y-0 md:group-hover:-translate-y-2">
+                    <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 bg-stone-900/90 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl md:text-3xl border shadow-xl border-red-500/80 md:border-stone-700 md:group-hover:border-red-500 scale-110 md:scale-100 md:group-hover:scale-110 transition-transform duration-300">
                       {feature.icon}
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-black text-white whitespace-nowrap drop-shadow-lg leading-none">
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white whitespace-nowrap drop-shadow-lg leading-none">
                       {feature.title}
                     </h3>
                   </div>
 
-                  {/* คำอธิบาย (ซ่อนไว้ โผล่ตอน Hover) */}
-                  <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-400 ease-in-out">
+                  {/* คำอธิบาย (มือถือโชว์เลย Desktop ปิดไว้รอ Hover) */}
+                  <div className="grid grid-rows-[1fr] md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] transition-all duration-400 ease-in-out">
                     <div className="overflow-hidden">
-                      <p className="text-stone-300 text-lg leading-relaxed drop-shadow-md pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-400 delay-100 line-clamp-2 md:line-clamp-none">
+                      <p className="text-stone-300 text-sm md:text-lg leading-relaxed drop-shadow-md pt-3 md:pt-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-400 md:delay-100 line-clamp-2 md:line-clamp-none">
                         {feature.desc}
                       </p>
                     </div>

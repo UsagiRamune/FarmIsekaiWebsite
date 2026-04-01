@@ -92,7 +92,7 @@ const Navbar = () => {
         </a>
 
         {/* เมนู Desktop (ซ่อนบนจอเล็ก) */}
-        <div className="hidden lg:flex items-center gap-8 ml-auto">
+        <div className="hidden xl:flex items-center gap-8 ml-auto">
           <div className="flex items-center gap-8 mr-4">
             {navItems.map((item) => {
               const isActive = activeSection === item.targetId || (item.targetId === 'features' && activeSection === 'survival');
@@ -151,7 +151,7 @@ const Navbar = () => {
 
         {/* ปุ่ม Hamburger สำหรับจอ Mobile */}
         <button 
-          className="lg:hidden text-amber-500 hover:text-amber-400 p-2"
+          className="xl:hidden text-amber-500 hover:text-amber-400 p-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
@@ -165,7 +165,7 @@ const Navbar = () => {
       </div>
 
       {/* เมนู Dropdown สำหรับ Mobile */}
-      <div className={`lg:hidden absolute top-full left-0 w-full bg-stone-950/95 backdrop-blur-md border-b border-white/5 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[500px] py-4' : 'max-h-0 py-0'}`}>
+      <div className={`xl:hidden absolute top-full left-0 w-full bg-stone-950/95 backdrop-blur-md border-b border-white/5 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[500px] py-4' : 'max-h-0 py-0'}`}>
         <div className="flex flex-col px-6 gap-4">
           {navItems.map((item) => (
             <div key={item.name} className="flex flex-col gap-2">
